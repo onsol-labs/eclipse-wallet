@@ -10,6 +10,7 @@ const tokenService = require('./solana-token-service');
 const scanService = require('./solana-scan-service');
 const swapService = require('./solana-swap-service');
 const nameService = require('./solana-name-service');
+const allDomainsNameService = require('./alldomains-name-service');
 const validationService = require('./solana-validation-service');
 const transactionService = require('./solana-transaction-service');
 
@@ -220,17 +221,28 @@ class SolanaAccount {
 
   async getDomain() {
     const connection = await this.getConnection();
+    const domain = allDomainsNameService.getDomain(connection, this.publicKey);
+    if (domain) {
+      return domain
+    }
     return nameService.getDomainName(connection, this.publicKey);
   }
 
   async getDomainFromPublicKey(publicKey) {
     const connection = await this.getConnection();
+    const domain = allDomainsNameService.getDomain(connection, publicKey);
+    if (domain) {
+      return domain
+    }
     return nameService.getDomainName(connection, publicKey);
   }
 
   async getPublicKeyFromDomain(domain) {
     const connection = await this.getConnection();
-    return nameService.getPublicKey(connection, domain);
+    if (domain.endsWith(".sol")) {
+      return nameService.getPublicKey(connection, domain);
+    }
+    return allDomainsNameService.getPublicKey(connection, domain);
   }
 
   async scanTransactions(transactions, options = {}) {
