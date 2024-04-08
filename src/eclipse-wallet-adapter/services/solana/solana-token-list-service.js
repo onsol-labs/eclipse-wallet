@@ -1,5 +1,5 @@
-const { TOKEN_PROGRAM_ID } = require('../../constants/token-constants');
-const http = require('axios');
+import { TOKEN_PROGRAM_ID } from '../../constants/token-constants';
+import http from 'axios';
 
 const TOKEN_LIST_URL_JUP = 'https://cache.jup.ag/tokens';
 
@@ -8,7 +8,7 @@ const TOKEN_LIST_URL_CDN =
 
 let tokenList = [];
 
-const retrieveTokenList = async () => {
+export const retrieveTokenList = async () => {
   if (Array.isArray(tokenList) && tokenList.length > 0) {
     return tokenList;
   }
@@ -29,7 +29,7 @@ const retrieveTokenList = async () => {
   return tokenList;
 };
 
-async function getTokenList() {
+export async function getTokenList() {
   const allTokens = await retrieveTokenList();
 
   const tokens = allTokens.map((token) => ({
@@ -44,7 +44,7 @@ async function getTokenList() {
   return tokens;
 }
 
-async function getTokensByOwner(connection, publicKey) {
+export async function getTokensByOwner(connection, publicKey) {
   const response = await connection.getParsedTokenAccountsByOwner(publicKey, {
     programId: TOKEN_PROGRAM_ID,
   });
@@ -58,17 +58,17 @@ async function getTokensByOwner(connection, publicKey) {
   return result;
 }
 
-async function getTokenBySymbol(symbol) {
+export async function getTokenBySymbol(symbol) {
   const tokens = await getTokenList();
   return tokens.filter((t) => t.symbol == symbol);
 }
 
-async function getTokenByAddress(address) {
+export async function getTokenByAddress(address) {
   const tokens = await getTokenList();
   return tokens.filter((t) => t.address == address);
 }
 
-async function getFeaturedTokenList() {
+export async function getFeaturedTokenList() {
   const tokens = await getTokenList();
   const featuredList = [
     { symbol: 'SOL', name: 'Wrapped SOL' },
@@ -82,11 +82,3 @@ async function getFeaturedTokenList() {
       featuredList.some((el) => el.symbol === t.symbol && el.name === t.name) && t.chainId === 101
   );
 }
-
-module.exports = {
-  getTokenList,
-  getTokensByOwner,
-  getTokenBySymbol,
-  getTokenByAddress,
-  getFeaturedTokenList,
-};
