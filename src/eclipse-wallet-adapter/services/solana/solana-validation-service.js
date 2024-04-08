@@ -1,5 +1,5 @@
 const { PublicKey } = require('@solana/web3.js');
-const nameService = require('./solana-name-service');
+const nameService = require('./alldomains-name-service');
 
 const INVALID_ADDRESS = {
   type: 'ERROR',
